@@ -14,7 +14,10 @@ const projModel = require('../data/helpers/projectModel');
 // CRUD endpoints -------------------------------
 
 router.get('/', (req, res) => {
-    
+    projModel.get(req.query)
+    .then(found => {
+        
+    })
 });
 
 
