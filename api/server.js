@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const actionRouter = require('../actions/actionsRouter');
+const projectsRouter = require('../projects/projectsRouter')
 
 const server = express();
 
@@ -13,6 +14,7 @@ server.get('/', (req, res) => {
 });
 
 server.use('/api/actions' , actionRouter)
+server.use('/api/projects' , projectsRouter)
 
 
 
