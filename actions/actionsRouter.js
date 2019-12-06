@@ -67,12 +67,11 @@ router.put('/:id', validateId, (req, res) => {
 // custom middleware
 function validateId(req, res, next) {
     const project_id = req.params.id
-    if (project_id >= 3) {
+    if ( project_id>= 3) {
         res.status(404).json({ errorMessage: "There is no id with that in the database" })
     } else {
-        res.status(200).json({ message: "The id is good" })
+        next();
     }
-    next();
 }
 
 
