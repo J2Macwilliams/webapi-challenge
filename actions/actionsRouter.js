@@ -24,19 +24,19 @@ router.get('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
     const id = req.params.id
-    
-    if(id) {
+
+    if (id) {
         actDB.get(id)
-        .then(found => {
-            res.status(200).json(found)
-        })
-        .catch(() => {
-            res.status(500).json({ message: "Error gathering actions." })
-        })
-    }else {
-        res.status(404).json({message: "There was no  action for the id"})
+            .then(found => {
+                res.status(200).json(found)
+            })
+            .catch(() => {
+                res.status(500).json({ message: "Error gathering actions." })
+            })
+    } else {
+        res.status(404).json({ message: "There was no  action for the id" })
     }
-        
+
 
 });
 
@@ -51,19 +51,26 @@ router.post('/', validateId, (req, res) => {
         })
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateId, (req, res) => {
     const id = req.params.id
-    actDB.remove(id)
+
+    actDB.get(id)
         .then(deletedAction => {
-            res.status(200).json({ message: `The action with id: ${id} was deleted`, deletedAction })
+            actDB.remove(id, deletedAction)
+                .then(gone => {
+                    res.status(200).json({ message: `The action with id: ${id} was deleted`, deletedAction })
+                })
+                .catch((error) => {
+                    res.status(500).json({ message: "There was an error deleting the action.", error })
+                })
         })
         .catch((error) => {
-            res.status(500).json({ message: "There was an error deleting the action.", error })
+            res.status(500).json({ message: "Deleting that action...Not Happening!" })
         })
 
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validateId, (req, res) => {
     const id = req.params.id
     const creAct = req.body
     if (!creAct.description || !creAct.notes) {
@@ -71,20 +78,19 @@ router.put('/:id', (req, res) => {
     } else {
         actDB.update(id, creAct)
             .then(updateAction => {
-                res.status(200).json({ message: "Updated with", action: `${creAct.description} ${creAct.notes}` })
+                res.status(200).json({ message: "Updated with", id: `${id}`, project_id: `${creAct.project_id}`, description: `${creAct.description}`, notes: `${creAct.notes}` })
             })
             .catch((error) => {
                 res.status(500).json({ message: "There was an error with the update.", error })
             })
     }
 
-
 });
 
 // custom middleware
 function validateId(req, res, next) {
     const project_id = req.params.id
-    if (project_id >= 3) {
+    if (!project_id) {
         res.status(404).json({ errorMessage: "There is no id with that in the database" })
     } else {
         next();
