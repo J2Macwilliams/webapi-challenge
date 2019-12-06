@@ -43,7 +43,7 @@ router.delete('/:id', (req, res) => {
             res.status(200).json({ message: `The action with id: ${id} was deleted`, deletedAction })
         })
         .catch((error) => {
-            res.status(500).json({ message: "There was an error deleting the action." })
+            res.status(500).json({ message: "There was an error deleting the action.", error })
         })
 
 });

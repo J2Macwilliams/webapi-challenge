@@ -26,7 +26,7 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
     const projBody = req.body
-    actModel.insert(projBody)
+    projModel.insert(projBody)
         .then(createProj => {
             res.status(200).json(createProj)
         })
@@ -35,6 +35,17 @@ router.post('/', (req, res) => {
         })
 });
 
+router.delete('/:id', (req, res) => {
+    const id = req.params.insert
+    projModel.remove(id)
+        .then(deletedProj => {
+            res.status(200).json({ message: `The project with id: ${id} was deleted`, deletedProj })
+        })
+        .catch((error) => {
+            res.status(500).json({ message: "There was an error deleting the project.", error })
+        })
+
+});
 
 
 
