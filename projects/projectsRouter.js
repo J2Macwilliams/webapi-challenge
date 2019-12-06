@@ -49,12 +49,12 @@ router.delete('/:id', (req, res) => {
 router.put('/:id', (req, res) => {
     const id = req.params.id
     const creProj = req.body
-    if (!creProj.description || !creProj.notes) {
+    if (!creProj.name || !creProj.description) {
         res.status(400).json({ message: "Please provide update" })
     } else {
         projDB.update(id, creProj)
             .then(updateAction => {
-                res.status(200).json({ message: "Updated with", action: `${creProj.description} ${creProj.notes}` })
+                res.status(200).json({ message: "Updated with", action:`${creProj.name} ${creProj.description}` })
             })
             .catch((error) => {
                 res.status(500).json({ message: "There was an error with the update.", error })
