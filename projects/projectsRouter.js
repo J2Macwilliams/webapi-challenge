@@ -6,8 +6,7 @@ router.use(express.json())
 
 
 // Access Models to store data-------------------
-const actModel = require('../data/helpers/actionModel');
-const projModel = require('../data/helpers/projectModel');
+const projDB = require('../data/helpers/projectModel');
 
 
 
@@ -15,7 +14,7 @@ const projModel = require('../data/helpers/projectModel');
 
 router.get('/', (req, res) => {
     const id = req.params.id
-    projModel.get(id)
+    projDB.get(id)
         .then(found => {
             res.status(200).json(found)
         })
@@ -24,9 +23,9 @@ router.get('/', (req, res) => {
         })
 });
 
-router.post('/', (req, res) => {
+router.post('/',  (req, res) => {
     const projBody = req.body
-    projModel.insert(projBody)
+    projDB.insert(projBody)
         .then(createProj => {
             res.status(200).json(createProj)
         })
@@ -37,7 +36,7 @@ router.post('/', (req, res) => {
 
 router.delete('/:id', (req, res) => {
     const id = req.params.insert
-    projModel.remove(id)
+    projDB.remove(id)
         .then(deletedProj => {
             res.status(200).json({ message: `The project with id: ${id} was deleted`, deletedProj })
         })
@@ -47,8 +46,23 @@ router.delete('/:id', (req, res) => {
 
 });
 
+router.put('/:id', (req, res) => {
+    const id = req.params.id
+    const creProj = req.body
+    if (!creProj.description || !creProj.notes) {
+        res.status(400).json({ message: "Please provide update" })
+    } else {
+        projDB.update(id, creProj)
+            .then(updateAction => {
+                res.status(200).json({ message: "Updated with", action: `${creProj.description} ${creProj.notes}` })
+            })
+            .catch((error) => {
+                res.status(500).json({ message: "There was an error with the update.", error })
+            })
+    }
 
 
+});
 
 
 

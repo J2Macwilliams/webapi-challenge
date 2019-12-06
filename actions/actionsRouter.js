@@ -6,16 +6,14 @@ router.use(express.json())
 
 
 // Access Models to store data-------------------
-const actModel = require('../data/helpers/actionModel');
-const projModel = require('../data/helpers/projectModel');
-
+const actDB = require('../data/helpers/actionModel');
 
 
 // CRUD endpoints -------------------------------
 
 router.get('/', (req, res) => {
     const id = req.params.id
-    actModel.get(id)
+    actDB.get(id)
         .then(found => {
             res.status(200).json(found)
         })
@@ -27,7 +25,7 @@ router.get('/', (req, res) => {
 
 router.post('/', validateId, (req, res) => {
     const actBody = req.body
-    actModel.insert(actBody)
+    actDB.insert(actBody)
         .then(createAct => {
             res.status(200).json(createAct)
         })
@@ -38,7 +36,7 @@ router.post('/', validateId, (req, res) => {
 
 router.delete('/:id', (req, res) => {
     const id = req.params.insert
-    actModel.remove(id)
+    actDB.remove(id)
         .then(deletedAction => {
             res.status(200).json({ message: `The action with id: ${id} was deleted`, deletedAction })
         })
@@ -54,7 +52,7 @@ router.put('/:id', validateId, (req, res) => {
     if (!creAct.description || !creAct.notes) {
         res.status(400).json({ message: "Please provide update" })
     } else {
-        actModel.update(id, creAct)
+        actDB.update(id, creAct)
             .then(updateAction => {
                 res.status(200).json({ message: "Updated with", action: `${creAct.description} ${creAct.notes}` })
             })
