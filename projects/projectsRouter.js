@@ -13,6 +13,17 @@ const projDB = require('../data/helpers/projectModel');
 // CRUD endpoints -------------------------------
 
 router.get('/', (req, res) => {
+
+    projDB.get()
+        .then(found => {
+            res.status(200).json(found)
+        })
+        .catch(() => {
+            res.status(500).json({ message: "There was an error getting the projects." })
+        })
+});
+
+router.get('/:id', validateId, (req, res) => {
     const id = req.params.id
     projDB.get(id)
         .then(found => {
@@ -23,8 +34,24 @@ router.get('/', (req, res) => {
         })
 });
 
-router.post('/',  (req, res) => {
+router.get('/:id/actions', validateId, (req, res) => {
+    const id = req.params.id
+    projDB.getProjectActions(id)
+        .then(actions => {
+            if (!actions) {
+                res.status(404).json({ message: "There are no associated actions with this id" })
+            } else {
+                res.status(200).json(actions)
+            }
+        })
+        .catch((error) => {
+            res.status(500).json({ message: "Error acquiring actions", error })
+        })
+});
+
+router.post('/', validatePost, (req, res) => {
     const projBody = req.body
+
     projDB.insert(projBody)
         .then(createProj => {
             res.status(200).json(createProj)
@@ -34,37 +61,69 @@ router.post('/',  (req, res) => {
         })
 });
 
-router.delete('/:id', (req, res) => {
+
+router.delete('/:id', validateId, (req, res) => {
     const id = req.params.id
-    projDB.remove(id)
+
+    projDB.get(id)
         .then(deletedProj => {
-            res.status(200).json({ message: `The project with id: ${id} was deleted`, deletedProj })
+            projDB.remove(id, deletedProj)
+                .then(gone => {
+                    res.status(200).json({ message: `The project with id: ${id} was deleted`, deletedProj })
+                })
+                .catch(() => {
+                    res.status(500).json({ message: "There was an error deleting the project" })
+                })
+        })
+        .catch(() => {
+            res.status(500).json({ message: "Deleting the project...Not Happening!" })
+        })
+
+});
+
+router.put('/:id', validateId, validatePost, (req, res) => {
+    const id = req.params.id
+    const createProj = req.body
+
+    projDB.get(id)
+        .then(found => {
+            projDB.update(id, createProj)
+                .then(update => {
+                    res.status(200).json({ message: "Updated with", name: `${createProj}` })
+                })
+                .catch((error) => {
+                    res.status(500).json({ message: "The Update had problems", error })
+                })
         })
         .catch((error) => {
-            res.status(500).json({ message: "There was an error deleting the project.", error })
+            res.status(404).json({ message: "Invalid Id", error })
         })
 
 });
 
-router.put('/:id', (req, res) => {
+// custom middleware-----------------------------
+
+function validateId(req, res, next) {
     const id = req.params.id
-    const creProj = req.body
-    if (!creProj.name || !creProj.description) {
-        res.status(400).json({ message: "Please provide update" })
+    projDB.get(id)
+        .then(id => {
+            req.project = id
+        })
+        .catch(() => {
+            res.status(400).json({ message: "invalid user id" })
+        })
+    next();
+}
+
+function validatePost(req, res, next) {
+    const projInfo = req.body
+
+    if (!projInfo) {
+        res.status(400).json({ message: "Missing project data." })
     } else {
-        projDB.update(id, creProj)
-            .then(updateAction => {
-                res.status(200).json({ message: "Updated with", action:`${creProj.name} ${creProj.description}` })
-            })
-            .catch((error) => {
-                res.status(500).json({ message: "There was an error with the update.", error })
-            })
+        next();
     }
-
-
-});
-
-
+}
 
 // Export router --------------------------------
 module.exports = router;

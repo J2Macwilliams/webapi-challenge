@@ -12,14 +12,31 @@ const actDB = require('../data/helpers/actionModel');
 // CRUD endpoints -------------------------------
 
 router.get('/', (req, res) => {
-    const id = req.params.id
-    actDB.get(id)
+    actDB.get()
         .then(found => {
             res.status(200).json(found)
         })
         .catch(() => {
             res.status(500).json({ message: "Error gathering actions." })
         })
+
+});
+
+router.get('/:id', (req, res) => {
+    const id = req.params.id
+    
+    if(id) {
+        actDB.get(id)
+        .then(found => {
+            res.status(200).json(found)
+        })
+        .catch(() => {
+            res.status(500).json({ message: "Error gathering actions." })
+        })
+    }else {
+        res.status(404).json({message: "There was no  action for the id"})
+    }
+        
 
 });
 
@@ -46,7 +63,7 @@ router.delete('/:id', (req, res) => {
 
 });
 
-router.put('/:id', validateId, (req, res) => {
+router.put('/:id', (req, res) => {
     const id = req.params.id
     const creAct = req.body
     if (!creAct.description || !creAct.notes) {
@@ -67,7 +84,7 @@ router.put('/:id', validateId, (req, res) => {
 // custom middleware
 function validateId(req, res, next) {
     const project_id = req.params.id
-    if ( project_id>= 3) {
+    if (project_id >= 3) {
         res.status(404).json({ errorMessage: "There is no id with that in the database" })
     } else {
         next();
