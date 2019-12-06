@@ -91,11 +91,19 @@ router.put('/:id', validateProjectId, (req, res) => {
 // custom middleware
 function validateProjectId(req, res, next) {
     const project_id = req.params.id
-    if (!project_id) {
-        res.status(404).json({ errorMessage: "There is no id with that in the database" })
-    } else {
-        next();
-    }
+    actDB.get(project_id)
+        .then(found => {
+            if (!found) {
+                res.status(404).json({ errorMessage: "There is no id with that in the database" })
+            } else {
+                next();
+            }
+        })
+        .catch((error) => {
+            res.status(500).json({ message: "There was an error accessing that project id.", error })
+        })
+
+
 }
 
 function validatePost(req, res, next) {
