@@ -40,13 +40,27 @@ Demonstrate your understanding of this Sprint's concepts by answering the follow
 
 - [ ] Mention two parts of Express that you learned about this week.
 
+1: Express has convenience helpers that enable endpoints to handle requests and make responses  streamlined between the front and back end. Examples are: req.params.id , req.query , res.send , res.status.
+
+2: Express makes routing in Node incredible! As applications scale, many more endpoints may be needed. Express offers the solution of routing to organize and abstract away the clutter of all the endpoints in 1  file. 
+
 - [ ] Describe Middleware?
+
+Middleware is a module tool that efficiently accomplishes a task within Node.js. There are tons of middleware out there. Express is itself a middleware that makes it easier to work in the node.js environment. Acquisition of middleware tools, through Express’ plug ins, make building a strong backend much easier. 
 
 - [ ] Describe a Resource?
 
+Everything is a resource. It’s an object. Everything is an object in JavaScript. It can contain a type and data. It can be passed around the front and back end of web applications. Resource objects can be grouped together in collections. They can be utilized through REST principles or GraphQL. 
+
 - [ ] What can the API return to help clients know if a request was successful?
 
+An API can return a status code in the 200 range to denote a successful HTTP request.
+
 - [ ] How can we partition our application into sub-applications?
+
+We can partition and simplify our code through abstracting out certain functions into separate folders. 
+
+This can be done though using custom middleware (to accomplish tasks that are repeated), routing to group similar endpoints, and creating modular validating functions. The list can go on an on. More compartmentalization of an app means a stronger more organized file structure to achieve a well built application.
 
 ## Minimum Viable Product
 
