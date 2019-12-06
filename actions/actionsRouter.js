@@ -14,7 +14,8 @@ const projModel = require('../data/helpers/projectModel');
 // CRUD endpoints -------------------------------
 
 router.get('/', (req, res) => {
-    actModel.get(req.query)
+    const id = req.params.id
+    actModel.get(id)
         .then(found => {
             res.status(200).json(found)
         })

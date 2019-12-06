@@ -14,11 +14,28 @@ const projModel = require('../data/helpers/projectModel');
 // CRUD endpoints -------------------------------
 
 router.get('/', (req, res) => {
-    projModel.get(req.query)
-    .then(found => {
-        
-    })
+    const id = req.params.id
+    projModel.get(id)
+        .then(found => {
+            res.status(200).json(found)
+        })
+        .catch(() => {
+            res.status(500).json({ message: "There was an error getting the projects." })
+        })
 });
+
+router.post('/', (req, res) => {
+    const projBody = req.body
+    actModel.insert(projBody)
+        .then(createProj => {
+            res.status(200).json(createProj)
+        })
+        .catch(() => {
+            res.status(500).json({ message: "There was an error creating that project." })
+        })
+});
+
+
 
 
 
