@@ -11,6 +11,7 @@ const actDB = require('../data/helpers/actionModel');
 
 // CRUD endpoints -------------------------------
 
+// Global GET endpoint
 router.get('/', (req, res) => {
     actDB.get()
         .then(found => {
@@ -22,6 +23,7 @@ router.get('/', (req, res) => {
 
 });
 
+// GET endpoint by id
 router.get('/:id', (req, res) => {
     const id = req.params.id
 
@@ -40,6 +42,7 @@ router.get('/:id', (req, res) => {
 
 });
 
+// POST for new actions dependent upon ValidProjectId
 router.post('/', validateProjectId, validatePost, (req, res) => {
     const actBody = req.body
 
@@ -52,6 +55,7 @@ router.post('/', validateProjectId, validatePost, (req, res) => {
         })
 });
 
+// DELETE by action id
 router.delete('/:id', validateProjectId, (req, res) => {
     const id = req.params.id
 
@@ -71,9 +75,11 @@ router.delete('/:id', validateProjectId, (req, res) => {
 
 });
 
+// PUT to update action
 router.put('/:id', validateProjectId, (req, res) => {
     const id = req.params.id
     const creAct = req.body
+
     if (!creAct.description || !creAct.notes) {
         res.status(400).json({ message: "Please provide update" })
     } else {
@@ -89,8 +95,11 @@ router.put('/:id', validateProjectId, (req, res) => {
 });
 
 // custom middleware
+
+// Validation middleware to confirm Project ID
 function validateProjectId(req, res, next) {
     const project_id = req.params.id
+
     actDB.get(project_id)
         .then(found => {
             if (!found) {
@@ -102,12 +111,12 @@ function validateProjectId(req, res, next) {
         .catch((error) => {
             res.status(500).json({ message: "There was an error accessing that project id.", error })
         })
-
-
 }
 
+// Validation middleware to confirm POST includes necessary information
 function validatePost(req, res, next) {
     const actionInfo = req.body
+
     if (!actionInfo.description && !actionInfo.notes) {
         res.status(404).json({ message: "Missing action information" })
     } else {
