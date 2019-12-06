@@ -4,14 +4,13 @@ const router = express.Router();
 
 router.use(express.json())
 
-
 // Access Models to store data-------------------
 const projDB = require('../data/helpers/projectModel');
 
 
-
 // CRUD endpoints -------------------------------
 
+// Global GET endpoint
 router.get('/', (req, res) => {
 
     projDB.get()
@@ -23,6 +22,7 @@ router.get('/', (req, res) => {
         })
 });
 
+// GET endpoint by Id
 router.get('/:id', validateId, (req, res) => {
     const id = req.params.id
     projDB.get(id)
@@ -34,6 +34,7 @@ router.get('/:id', validateId, (req, res) => {
         })
 });
 
+// GET endpoint by id for projects actions 
 router.get('/:id/actions', validateId, (req, res) => {
     const id = req.params.id
     projDB.getProjectActions(id)
@@ -49,6 +50,7 @@ router.get('/:id/actions', validateId, (req, res) => {
         })
 });
 
+// POST endpoint for new projects with validation of necessary information
 router.post('/', validatePost, (req, res) => {
     const projBody = req.body
 
@@ -61,7 +63,7 @@ router.post('/', validatePost, (req, res) => {
         })
 });
 
-
+// DELETE by projects ID
 router.delete('/:id', validateId, (req, res) => {
     const id = req.params.id
 
@@ -81,6 +83,8 @@ router.delete('/:id', validateId, (req, res) => {
 
 });
 
+
+// PUT by ID to Update projects
 router.put('/:id', validateId, validatePost, (req, res) => {
     const id = req.params.id
     const createProj = req.body
@@ -103,6 +107,8 @@ router.put('/:id', validateId, validatePost, (req, res) => {
 
 // custom middleware-----------------------------
 
+
+// Validation of ID with custom middleware 
 function validateId(req, res, next) {
     const id = req.params.id
     projDB.get(id)
@@ -115,6 +121,7 @@ function validateId(req, res, next) {
     next();
 }
 
+// Validation custom middleware that POST has necessary information
 function validatePost(req, res, next) {
     const projInfo = req.body
 
