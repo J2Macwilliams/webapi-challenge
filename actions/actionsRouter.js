@@ -40,8 +40,9 @@ router.get('/:id', (req, res) => {
 
 });
 
-router.post('/', validateId, (req, res) => {
+router.post('/', validateProjectId, validatePost, (req, res) => {
     const actBody = req.body
+
     actDB.insert(actBody)
         .then(createAct => {
             res.status(200).json(createAct)
@@ -51,7 +52,7 @@ router.post('/', validateId, (req, res) => {
         })
 });
 
-router.delete('/:id', validateId, (req, res) => {
+router.delete('/:id', validateProjectId, (req, res) => {
     const id = req.params.id
 
     actDB.get(id)
@@ -70,7 +71,7 @@ router.delete('/:id', validateId, (req, res) => {
 
 });
 
-router.put('/:id', validateId, (req, res) => {
+router.put('/:id', validateProjectId, (req, res) => {
     const id = req.params.id
     const creAct = req.body
     if (!creAct.description || !creAct.notes) {
@@ -88,7 +89,7 @@ router.put('/:id', validateId, (req, res) => {
 });
 
 // custom middleware
-function validateId(req, res, next) {
+function validateProjectId(req, res, next) {
     const project_id = req.params.id
     if (!project_id) {
         res.status(404).json({ errorMessage: "There is no id with that in the database" })
@@ -97,6 +98,14 @@ function validateId(req, res, next) {
     }
 }
 
+function validatePost(req, res, next) {
+    const actionInfo = req.body
+    if (!actionInfo.description && !actionInfo.notes) {
+        res.status(404).json({ message: "Missing action information" })
+    } else {
+        next();
+    }
+}
 
 // Export router --------------------------------
 module.exports = router;
