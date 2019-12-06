@@ -35,7 +35,7 @@ router.post('/', validateId, (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-    const id = req.params.insert
+    const id = req.params.id
     actDB.remove(id)
         .then(deletedAction => {
             res.status(200).json({ message: `The action with id: ${id} was deleted`, deletedAction })
@@ -66,8 +66,8 @@ router.put('/:id', validateId, (req, res) => {
 
 // custom middleware
 function validateId(req, res, next) {
-    const id = req.params.id
-    if (id >= 3) {
+    const project_id = req.params.id
+    if (project_id >= 3) {
         res.status(404).json({ errorMessage: "There is no id with that in the database" })
     } else {
         res.status(200).json({ message: "The id is good" })

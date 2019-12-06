@@ -35,7 +35,7 @@ router.post('/',  (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-    const id = req.params.insert
+    const id = req.params.id
     projDB.remove(id)
         .then(deletedProj => {
             res.status(200).json({ message: `The project with id: ${id} was deleted`, deletedProj })
